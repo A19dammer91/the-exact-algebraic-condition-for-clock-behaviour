@@ -28,8 +28,8 @@ A0 = N mod 12
 
 The clock has no equivalent condition, and it is not supposed to have one. For a positional system to work without ambiguity, every place value must divide cleanly into the one above it:
 
-3600 mod 60 = 0
-60 mod 1 = 0
+* 3600 mod 60 = 0
+* 60 mod 1 = 0
 
 This is the opposite of the Foundation condition that drives the (25,12) system. Where Foundation makes multiple representations possible, the clock's structure exists specifically to rule multiple representations out.
 
@@ -39,9 +39,9 @@ This is the opposite of the Foundation condition that drives the (25,12) system.
 
 The (25,12) system applies one global modulus to the number as a whole. The clock applies a chain of local moduli, each one working on what is left over after the layer above it:
 
-S = T mod 60
-M = floor((T mod 3600) / 60)
-H = floor(T / 3600) mod 24
+* S = T mod 60
+* M = floor((T mod 3600) / 60)
+* H = floor(T / 3600) mod 24
 
 There is no single operation on T that reveals the full (H, M, S) structure at once. Each layer has to be peeled off before the next one can be read.
 
