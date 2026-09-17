@@ -6,6 +6,8 @@
 **Independent Researcher**, Amsterdam
 **Year:** 2026
 
+🔗 **[Try the interactive web demo](https://a19dammer91.github.io/the-exact-algebraic-condition-for-clock-behaviour/)**
+
 ---
 
 ## Start here: one question
@@ -223,6 +225,24 @@ Alongside this paper there is an HTML document that brings the whole structure t
 
 The document is available in both English and Dutch.
 
+**Live demo:** https://a19dammer91.github.io/the-exact-algebraic-condition-for-clock-behaviour/
+
+---
+
+## Companion work
+
+This paper is the conceptual counterpart to a pattern paper on deterministic decomposition. Where this paper shows a system that deliberately refuses multiplicity in order to guarantee uniqueness, the companion paper shows a system that embraces multiplicity: one anchor value, five structural layers, and a closed O(1) rule for splitting any integer across them.
+
+**The D³ Pattern: Deterministic Data Decomposition by A-C Coupling**
+
+- Repository: https://github.com/A19dammer91/D3-by-A-C-Coupling-Demo
+- Live demo: https://a19dammer91.github.io/D3-by-A-C-Coupling-Demo/
+- DOI: https://doi.org/10.5281/zenodo.20819940
+
+Read together, the two papers frame a single question: what does it mean for a representation system to be complete, and what does it cost to give up multiplicity in exchange for uniqueness?
+
+---
+
 ## Related work
 
 This paper is part of a series on linear Diophantine representation systems with p ≡ 1 (mod q):
@@ -240,6 +260,6 @@ Commercial use is not covered by this license.
 
 Bilal El Issaoui
 elissa.oui.amster@gmail.com
-elissa_oui@outlook.com
+elissa.oui@outlook.com
 
 Or open an Issue or start a Discussion in this repository.
