@@ -19,7 +19,6 @@
   }
   .wrap{max-width:780px;margin:0 auto;padding:46px 20px 0}
 
-  /* ---------- titles ---------- */
   .head h1{
     font-family:var(--mono); font-size:clamp(1.5rem,5vw,2.05rem);
     font-weight:700; letter-spacing:-.02em; margin:0 0 6px;
@@ -32,15 +31,12 @@
     margin:0 0 22px;
   }
 
-  /* ---------- prose ---------- */
   .prose{font-size:1rem;color:#33363d;margin:0 0 34px}
   .prose b{font-weight:650;color:var(--ink)}
   .prose p{margin:0 0 14px}
   .prose p:last-child{margin-bottom:0}
 
-  .section{
-    margin-top:48px;
-  }
+  .section{margin-top:48px}
   .section h2{
     font-size:.75rem;
     text-transform:uppercase;
@@ -81,33 +77,32 @@
     letter-spacing:.02em;
   }
 
-  .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:14px;
-    padding:18px 22px 20px;
-    margin:0 0 22px;
-    box-shadow:0 1px 2px rgba(20,20,20,.04);
-  }
-  .card h2{
-    font-size:.75rem;
-    text-transform:uppercase;
-    letter-spacing:.12em;
-    color:var(--accent);
-    margin:0 0 12px;
+  .chain{
+    font-family:var(--mono);
+    font-size:1.05rem;
     font-weight:700;
+    color:var(--ink);
+    text-align:center;
+    padding:16px 14px;
+    background:#fafaf7;
+    border:1px dashed var(--line);
+    border-radius:12px;
+    margin:14px 0 18px;
+    letter-spacing:.08em;
   }
+  .chain .arrow{color:var(--accent)}
 
   .table{
     width:100%;
     border-collapse:collapse;
     font-size:.85rem;
-    margin:0 0 14px;
+    margin:14px 0;
   }
   .table th, .table td{
     text-align:left;
     padding:8px 10px;
     border-bottom:1px solid var(--line);
+    vertical-align:top;
   }
   .table th{
     font-weight:700;
@@ -117,12 +112,16 @@
     color:var(--muted);
   }
   .table td:first-child{
+    font-weight:650;
+    color:var(--ink);
+    white-space:nowrap;
+  }
+  .table td:last-child{
     font-family:var(--mono);
-    font-weight:600;
-    color:var(--accent);
+    font-size:.8rem;
+    color:#33363d;
   }
 
-  /* ---------- layers ---------- */
   .layers{display:flex;flex-direction:column}
   .layer{
     background:var(--card); border:1px solid var(--line); border-radius:14px;
@@ -155,11 +154,11 @@
   .formula .f1{color:#4a4d55}
   .formula .f2{color:var(--accent);font-weight:650}
   .note{margin:0;font-size:.8rem;color:var(--muted)}
-  .arrow{
+  .arrow-flash{
     height:32px; display:flex; align-items:center; justify-content:center;
     color:#c6c4bc; font-size:1.05rem; line-height:1; user-select:none;
   }
-  .arrow.flash{animation:carry .85s cubic-bezier(.2,.7,.3,1) both}
+  .arrow-flash.flash{animation:carry .85s cubic-bezier(.2,.7,.3,1) both}
   @keyframes carry{
     0%{color:var(--accent);transform:scale(2);text-shadow:0 0 14px rgba(232,89,12,.55)}
     55%{color:var(--accent);transform:scale(1.15);text-shadow:0 0 6px rgba(232,89,12,.28)}
@@ -174,7 +173,6 @@
     margin:14px 0 0;
   }
 
-  /* ---------- controls ---------- */
   .controls{
     margin-top:22px; background:var(--card); border:1px solid var(--line);
     border-radius:14px; padding:20px 22px 22px;
@@ -194,10 +192,7 @@
     box-shadow:0 0 0 3px var(--accent-soft);
   }
 
-  .slidergroup{
-    margin-top:20px;
-    transition:opacity .22s ease;
-  }
+  .slidergroup{margin-top:20px;transition:opacity .22s ease}
   .slidergroup.out-of-range{opacity:.55}
   .sliderhead{
     display:flex; justify-content:space-between; align-items:baseline;
@@ -242,9 +237,7 @@
     padding:9px 15px; line-height:1.15; min-width:106px; text-align:left;
     border-radius:10px;
   }
-  .speed .s-main{
-    font-size:.92rem; font-weight:700; font-family:var(--mono);
-  }
+  .speed .s-main{font-size:.92rem;font-weight:700;font-family:var(--mono)}
   .speed .s-sub{
     font-size:.65rem; font-weight:700; letter-spacing:.06em;
     color:var(--muted); text-transform:uppercase;
@@ -281,6 +274,9 @@
     .speedlabel{width:100%;margin:0 0 2px}
     .sliderhead{flex-direction:column;align-items:flex-start;gap:1px}
     .pull{font-size:1.1rem}
+    .chain{font-size:.9rem}
+    .table{font-size:.78rem}
+    .table td:last-child{font-size:.72rem}
   }
 </style>
 </head>
@@ -293,7 +289,6 @@
     <p class="subtitle">Time Decomposition</p>
   </header>
 
-  <!-- ================= OPENING ================= -->
   <div class="prose">
     <p>
       A stopwatch has been running for <b>45,296,789 milliseconds</b>. What does the display say?
@@ -314,7 +309,6 @@
     </p>
   </div>
 
-  <!-- ================= DEMO ================= -->
   <section class="section">
     <h2>Try it yourself</h2>
     <p>
@@ -393,7 +387,6 @@
 
   </div>
 
-  <!-- ================= MONEY ================= -->
   <section class="section">
     <h2>What is happening here</h2>
 
@@ -413,28 +406,85 @@
       At the other extreme stands the clock.
     </p>
 
-    <h3>The clock works in the opposite way</h3>
+    <h3>The clock uses a different Diophantine structure</h3>
     <p>
-      A clock has one job that matters more than any other: <b>every second must have exactly one
-      face</b>. Never two, never zero. When you look at the clock at 3 in the afternoon, you do
-      not want to wonder whether it might also be 3 in the morning.
+      A clock time can also be written as a linear Diophantine representation. In seconds it
+      looks like this:
+    </p>
+    <div class="chain">T = 3600·H + 60·M + S</div>
+    <p>
+      Same shape as the money example. Same kind of equation. But the clock arrives at exactly
+      one answer, while the money example gives several. The difference is not in the type of
+      equation. It is in the structure of the bases and the bounds on the coefficients.
     </p>
     <p>
-      With the money example, it is fine that there are two ways to pay €575. With the clock,
-      that is unacceptable. That difference in purpose decides everything. Where money allows
-      many answers, the clock must allow exactly one. And to achieve that, the clock has to
-      follow a rule that money does not:
+      The clock's bases form a chain:
+    </p>
+    <div class="chain">1000 <span class="arrow">→</span> 60 <span class="arrow">→</span> 60 <span class="arrow">→</span> 24</div>
+    <p>
+      Each position value is an exact multiple of the one below it. 1000 milliseconds make one
+      second. 60 seconds make one minute. 60 minutes make one hour. 24 hours make one day. No
+      leftover at any step. And on top of that, each coefficient is bounded: seconds and minutes
+      stay below 60, hours stay below 24.
     </p>
     <p>
-      <b>Every layer must fit exactly into the layer above it.</b> 60 seconds fit exactly into
-      1 minute. 60 minutes fit exactly into 1 hour. 24 hours fit exactly into 1 day. No leftover,
-      no rounding. That is why seconds jump back to 0 after 59, and not after 60 or after 100.
-      And that is why a clock cannot have a Diophantine structure. Not because it is forbidden,
-      but because it would not work.
+      Together, those two properties give exactly one representation for every instant. Remove
+      either one, and uniqueness collapses.
+    </p>
+    <p>
+      The money example does the opposite. The two coefficients, 25 and 12, are not in a
+      divisibility relation at all. They are related by a single offset:
+    </p>
+    <div class="chain">25 ≡ 1 (mod 12)</div>
+    <p>
+      Because of that one relation, you can compute the smallest €25 count directly as N mod 12.
+      But nothing bounds the coefficients, so the same equation accepts a whole ladder of
+      solutions, each one a valid answer.
+    </p>
+    <p>
+      Both systems are Diophantine. Both follow exact rules. They simply achieve their
+      determinism through opposite mechanisms.
+    </p>
+
+    <table class="table">
+      <thead>
+        <tr><th></th><th>(25, 12) system</th><th>Clock</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Type</td>
+          <td>Linear Diophantine</td>
+          <td>Linear Diophantine</td>
+        </tr>
+        <tr>
+          <td>Base relation</td>
+          <td>One foundation relation: 25 ≡ 1 (mod 12)</td>
+          <td>Each base is a multiple of the one below</td>
+        </tr>
+        <tr>
+          <td>Coefficient bounds</td>
+          <td>None</td>
+          <td>Seconds &lt; 60, minutes &lt; 60, hours &lt; 24</td>
+        </tr>
+        <tr>
+          <td>Number of solutions</td>
+          <td>Multiple</td>
+          <td>Exactly one</td>
+        </tr>
+        <tr>
+          <td>Source of structure</td>
+          <td>A single residue relation</td>
+          <td>A hierarchical divisibility chain</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      A clock is not a weaker Diophantine system. It is a different one, deliberately built to
+      guarantee uniqueness instead of exploring multiplicity.
     </p>
   </section>
 
-  <!-- ================= PRACTICAL ================= -->
   <section class="section">
     <h2>Why this matters in practice</h2>
 
@@ -471,11 +521,11 @@
       Every system with layers on top of each other has to make a choice. Either you make it
       easy to find every possible combination, like money. Or you make it impossible to be
       uncertain, like a clock. Those are opposite goals. You cannot unite them in one structure.
-      That is not a flaw of the clock. It is a design decision.
+      That is not a flaw of the clock. It is a design decision. And both choices are Diophantine
+      at heart. They simply pick different mechanisms to reach their purpose.
     </p>
   </section>
 
-  <!-- ================= TEACHING ================= -->
   <section class="section">
     <h2>Why this is a better teaching route than the usual one</h2>
     <p>
@@ -489,7 +539,7 @@
       <li><b>Then state the rule.</b> Why does it jump back after 12? Because it can show 12 hours and no more.</li>
       <li><b>Write the rule down.</b> That is modulo. The student already has the idea, only the name is missing.</li>
       <li><b>Apply it to money.</b> Now the student can solve a Diophantine problem without it being called that.</li>
-      <li><b>Show the difference.</b> The clock chooses certainty, money chooses freedom. That is the real insight.</li>
+      <li><b>Show the difference.</b> Both systems use the same kind of equation. The clock adds divisibility and bounds. Money does not. That is the real insight.</li>
     </ol>
     <p>
       Someone who learns it this way understands modulo not as a trick, but as a choice you
@@ -497,7 +547,6 @@
     </p>
   </section>
 
-  <!-- ================= BEAUTIFUL TIME ================= -->
   <section class="section">
     <h2>The most beautiful time a clock can show</h2>
     <p>
@@ -518,40 +567,46 @@
     </p>
   </section>
 
-  <!-- ================= HEART ================= -->
   <section class="section">
     <h2>The heart of the difference</h2>
 
     <h3>The (25, 12) system</h3>
     <p>
-      The money example rests on one rule for the whole number: <b>25 is one more than a
-      multiple of 12</b>. In other words, 25 = 2 × 12 + 1. Because of this, you can work out
-      in one step how many €25 notes you need at minimum. You divide N by 12, look at the
-      remainder, and you are done. Every other solution then follows automatically: add 12 to
-      the number of €25 notes, subtract 25 from the number of €12 notes. Keep doing that until
-      it no longer fits.
+      The money example rests on one relation for the whole number: <b>25 is one more than a
+      multiple of 12</b>. In other words, 25 = 2 × 12 + 1, or 25 ≡ 1 (mod 12). Because of this,
+      you can work out in one step how many €25 notes you need at minimum. You divide N by 12,
+      look at the remainder, and you are done. Every other solution then follows automatically:
+      add 12 to the number of €25 notes, subtract 25 from the number of €12 notes. Keep doing
+      that until it no longer fits. That is what produces the ladder of valid answers.
     </p>
 
     <h3>The clock</h3>
     <p>
-      The clock works differently. There is no single rule that gives the whole answer in one
-      step. Each layer must be peeled off on its own. First the hours: how many whole hours fit
-      into T? Then the minutes: how many whole minutes fit into what is left? Then the seconds:
-      what is still left over? Only after four steps do you know the full answer. That is not
-      a weakness. That is exactly what is needed to make every second unique.
+      The clock works differently. Its bases form a chain of exact multiples: 24 × 60 × 60 × 1000,
+      which is 86,400,000. And each coefficient is bounded by the ratio of the adjacent bases.
+      That is what gives you exactly one answer, not a ladder.
+    </p>
+    <p>
+      You peel off one layer at a time. Take T mod 1000 and you get Ms directly, because 1000 is
+      the smallest base. Divide away the milliseconds, take the result mod 60, and you get S.
+      Divide away the seconds, take the result mod 60, and you get M. Divide away the minutes,
+      take the result mod 24, and you get H. At every step, the coefficient you extract is
+      automatically bounded by the modulus you just used.
     </p>
 
     <h3>Why they are not the same, even though they look alike</h3>
     <p>
-      At first glance, both systems look similar. They both jump back to 0. But the clock jumps
-      back because every layer fits into the one above it. The (25, 12) system does not jump
-      back. It just keeps counting, and the rule 25 = 1 above 12 determines how many solutions
-      exist. That is the heart of it. The clock has no Foundation, and that is not a mistake.
-      That is the entire point.
+      Both systems peel off layers with a mod operation. Both are Diophantine. But they answer
+      different questions. The (25, 12) system asks: how many ways can I build N out of these
+      two coefficients? It answers with a formula for a whole family. The clock asks: what is
+      the unique decomposition of T into these five bounded layers? It answers with exactly one
+      tuple.
+    </p>
+    <p>
+      Same equation shape. Opposite purposes.
     </p>
   </section>
 
-  <!-- ================= TRAP ================= -->
   <section class="section">
     <h2>The 12-hour trap</h2>
     <p>
@@ -578,13 +633,12 @@
     </p>
   </section>
 
-  <!-- ================= SUMMARY ================= -->
   <section class="section">
     <h2>Summary in three points</h2>
     <ol>
-      <li><b>The purpose differs.</b> The (25, 12) system is built to find as many combinations as possible. The clock is built to give every second exactly one face.</li>
-      <li><b>The method differs.</b> The (25, 12) system uses one rule for the whole number. The clock uses a chain of rules, one per layer.</li>
-      <li><b>The missing Foundation is not a flaw.</b> The clock deliberately chooses certainty. That is exactly the opposite of what the money example needs, and that is the whole point.</li>
+      <li><b>Both are Diophantine.</b> The money example and the clock are both linear Diophantine representations. Same equation shape, different constraints.</li>
+      <li><b>The source of uniqueness differs.</b> The (25, 12) system relies on a single foundation relation, 25 ≡ 1 (mod 12), with no bounds on the coefficients. The clock relies on a hierarchical divisibility chain, 1000, 60, 60, 24, with bounded coefficients. That is what makes the clock unique and the money example multiple.</li>
+      <li><b>Both choices are deliberate.</b> Neither structure is a mistake. The (25, 12) system is built to explore multiplicity. The clock is built to guarantee certainty. Each answers the question it was designed for.</li>
     </ol>
   </section>
 
@@ -600,8 +654,8 @@
   'use strict';
 
   var DAY = 86400000, HOUR = 3600000, MIN = 60000, SEC = 1000;
-  var MONTH_MAX = 30 * DAY - 1;    /* 2591999999 = 29 d 23:59:59.999 */
-  var CLOCK_MAX = 45296789;        /* 12:34:56.789 */
+  var MONTH_MAX = 30 * DAY - 1;
+  var CLOCK_MAX = 45296789;
 
   var LAYERS = [
     { key:'d', name:'Days', badge:'unbounded', mod:null,
@@ -644,7 +698,7 @@
   LAYERS.forEach(function (L, i) {
     if (i > 0) {
       var a = document.createElement('div');
-      a.className = 'arrow'; a.textContent = '\u2190';
+      a.className = 'arrow-flash'; a.textContent = '\u2190';
       a.setAttribute('aria-hidden', 'true');
       layersEl.appendChild(a);
       arrows[L.key] = a;
