@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Time Decomposition | [3600, 60, 1]</title>
+<style>
+  :root{
+    --bg:#f6f5f2; --card:#ffffff; --ink:#16181d; --muted:#6d6f76;
+    --line:#e3e2dd; --accent:#e8590c; --accent-soft:#fdeee4;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased; padding:0 0 90px;
+  }
+  .wrap{max-width:780px;margin:0 auto;padding:46px 20px 0}
+
+  /* ---------- titles ---------- */
+  .head h1{
+    font-family:var(--mono); font-size:clamp(1.5rem,5vw,2.05rem);
+    font-weight:700; letter-spacing:-.02em; margin:0 0 6px;
+  }
+  .head .subtitle{
+    font-family:var(--mono);
+    font-size:clamp(1rem,3.2vw,1.2rem);
+    font-weight:700;
+    color:var(--accent);
+    margin:0 0 22px;
+  }
+
+  /* ---------- prose ---------- */
+  .prose{font-size:1rem;color:#33363d;margin:0 0 34px}
+  .prose b{font-weight:650;color:var(--ink)}
+  .prose p{margin:0 0 14px}
+  .prose p:last-child{margin-bottom:0}
+
+  .section{
+    margin-top:48px;
+  }
+  .section h2{
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--accent);
+    margin:0 0 12px;
+    font-weight:700;
+  }
+  .section h3{
+    font-size:1rem;
+    font-weight:650;
+    margin:22px 0 8px;
+    color:var(--ink);
+  }
+  .section h3:first-of-type{margin-top:6px}
+  .section p{font-size:.94rem;color:#33363d;margin:0 0 12px}
+  .section ul, .section ol{
+    margin:0 0 14px;
+    padding-left:22px;
+    font-size:.94rem;
+    color:#33363d;
+  }
+  .section li{margin-bottom:8px}
+  .section li:last-child{margin-bottom:0}
+  .section b{font-weight:650;color:var(--ink)}
+
+  .pull{
+    font-family:var(--mono);
+    font-size:1.35rem;
+    font-weight:700;
+    color:var(--accent);
+    text-align:center;
+    padding:20px 14px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    margin:18px 0 22px;
+    letter-spacing:.02em;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:18px 22px 20px;
+    margin:0 0 22px;
+    box-shadow:0 1px 2px rgba(20,20,20,.04);
+  }
+  .card h2{
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--accent);
+    margin:0 0 12px;
+    font-weight:700;
+  }
+
+  .table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.85rem;
+    margin:0 0 14px;
+  }
+  .table th, .table td{
+    text-align:left;
+    padding:8px 10px;
+    border-bottom:1px solid var(--line);
+  }
+  .table th{
+    font-weight:700;
+    font-size:.7rem;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--muted);
+  }
+  .table td:first-child{
+    font-family:var(--mono);
+    font-weight:600;
+    color:var(--accent);
+  }
+
+  /* ---------- layers ---------- */
+  .layers{display:flex;flex-direction:column}
+  .layer{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:15px 18px 14px; box-shadow:0 1px 2px rgba(20,20,20,.04);
+  }
+  .layer-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .layer-name{font-weight:650;font-size:1.02rem}
+  .badge{
+    font-size:.68rem; text-transform:uppercase; letter-spacing:.09em;
+    font-weight:700; color:var(--accent); background:var(--accent-soft);
+    padding:3px 9px; border-radius:999px; white-space:nowrap;
+  }
+  .field{
+    display:block; width:100%; margin:11px 0 10px;
+    font-family:var(--mono); font-size:1.45rem; font-weight:600;
+    padding:7px 12px;
+    border:1px solid var(--line); border-radius:10px;
+    background:#fbfbf9; color:var(--ink);
+    transition:background .15s,border-color .15s,box-shadow .15s;
+  }
+  .field:focus{
+    outline:none; background:#fff; border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft);
+  }
+  .formula{
+    font-family:var(--mono); font-size:.795rem; line-height:1.5;
+    border-left:3px solid var(--accent); padding-left:11px; margin:0 0 9px;
+    display:flex; flex-direction:column; gap:1px; overflow-wrap:anywhere;
+  }
+  .formula .f1{color:#4a4d55}
+  .formula .f2{color:var(--accent);font-weight:650}
+  .note{margin:0;font-size:.8rem;color:var(--muted)}
+  .arrow{
+    height:32px; display:flex; align-items:center; justify-content:center;
+    color:#c6c4bc; font-size:1.05rem; line-height:1; user-select:none;
+  }
+  .arrow.flash{animation:carry .85s cubic-bezier(.2,.7,.3,1) both}
+  @keyframes carry{
+    0%{color:var(--accent);transform:scale(2);text-shadow:0 0 14px rgba(232,89,12,.55)}
+    55%{color:var(--accent);transform:scale(1.15);text-shadow:0 0 6px rgba(232,89,12,.28)}
+    100%{color:#c6c4bc;transform:scale(1);text-shadow:none}
+  }
+
+  .sumline{
+    font-family:var(--mono); font-size:.83rem; line-height:1.6;
+    background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:14px 16px; overflow-wrap:anywhere;
+    box-shadow:0 1px 2px rgba(20,20,20,.04);
+    margin:14px 0 0;
+  }
+
+  /* ---------- controls ---------- */
+  .controls{
+    margin-top:22px; background:var(--card); border:1px solid var(--line);
+    border-radius:14px; padding:20px 22px 22px;
+    box-shadow:0 1px 2px rgba(20,20,20,.04);
+  }
+  .tlabel{
+    display:block; font-size:.7rem; text-transform:uppercase;
+    letter-spacing:.11em; font-weight:700; color:var(--muted); margin-bottom:6px;
+  }
+  .tfield{
+    width:100%; font-family:var(--mono); font-size:1.1rem; font-weight:600;
+    padding:8px 12px; border:1px solid var(--line); border-radius:10px;
+    background:#fbfbf9; color:var(--ink);
+  }
+  .tfield:focus{
+    outline:none; background:#fff; border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft);
+  }
+
+  .slidergroup{
+    margin-top:20px;
+    transition:opacity .22s ease;
+  }
+  .slidergroup.out-of-range{opacity:.55}
+  .sliderhead{
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap:12px; margin-bottom:5px;
+  }
+  .slidername{font-size:.78rem;font-weight:700;color:var(--ink)}
+  .slidermeta{font-family:var(--mono);font-size:.68rem;color:var(--muted)}
+  input[type=range]{
+    width:100%; margin:6px 0 4px;
+    accent-color:var(--accent); cursor:pointer;
+  }
+  .sliderrange{
+    display:flex; justify-content:space-between;
+    font-family:var(--mono); font-size:.72rem; color:var(--muted);
+  }
+
+  .btnrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:22px}
+  button{
+    font:inherit; font-size:.845rem; font-weight:600; padding:8px 14px;
+    border-radius:9px; border:1px solid var(--line); background:#fff;
+    color:var(--ink); cursor:pointer;
+    transition:background .14s,border-color .14s,color .14s,transform .06s;
+  }
+  button:hover{border-color:#c9c7c0;background:#faf9f6}
+  button:active{transform:translateY(1px)}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  button.primary:hover{background:#d24e08;border-color:#d24e08}
+  button.primary.running{background:#2b2d33;border-color:#2b2d33}
+
+  .speedrow{
+    display:flex; flex-wrap:wrap; gap:10px; align-items:stretch;
+    margin-top:22px;
+  }
+  .speedlabel{
+    font-size:.7rem; text-transform:uppercase; letter-spacing:.11em;
+    font-weight:700; color:var(--muted);
+    align-self:center; margin-right:4px;
+  }
+  .speed{
+    display:flex; flex-direction:column; align-items:flex-start; gap:1px;
+    padding:9px 15px; line-height:1.15; min-width:106px; text-align:left;
+    border-radius:10px;
+  }
+  .speed .s-main{
+    font-size:.92rem; font-weight:700; font-family:var(--mono);
+  }
+  .speed .s-sub{
+    font-size:.65rem; font-weight:700; letter-spacing:.06em;
+    color:var(--muted); text-transform:uppercase;
+  }
+  .speed.active{
+    background:var(--accent-soft); border-color:var(--accent); color:var(--accent);
+  }
+  .speed.active .s-main{color:var(--accent)}
+  .speed.active .s-sub{color:var(--accent); opacity:.85}
+  .speedhint{
+    margin:14px 0 0;
+    font-size:.83rem;
+    line-height:1.5;
+    color:#3a3d45;
+    padding:10px 14px;
+    background:#fafaf7;
+    border-left:3px solid var(--accent);
+    border-radius:0 8px 8px 0;
+  }
+  .speedhint b{color:var(--accent);font-weight:700;font-family:var(--mono)}
+
+  .foot{
+    max-width:780px; margin:56px auto 0; padding:0 20px;
+    font-size:.78rem; color:#9b9a94;
+    line-height:1.6;
+  }
+
+  @media (max-width:520px){
+    .wrap{padding-top:32px}
+    .field{font-size:1.25rem}
+    .formula{font-size:.72rem}
+    button{padding:7px 11px;font-size:.8rem}
+    .speed{min-width:calc(50% - 5px)}
+    .speedlabel{width:100%;margin:0 0 2px}
+    .sliderhead{flex-direction:column;align-items:flex-start;gap:1px}
+    .pull{font-size:1.1rem}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="head">
+    <h1>[3600, 60, 1]</h1>
+    <p class="subtitle">Time Decomposition</p>
+  </header>
+
+  <!-- ================= OPENING ================= -->
+  <div class="prose">
+    <p>
+      A stopwatch has been running for <b>45,296,789 milliseconds</b>. What does the display say?
+    </p>
+  </div>
+
+  <div class="pull">12:34:56.789</div>
+
+  <div class="prose">
+    <p>
+      Anyone who has ever used a stopwatch knows the answer without thinking. But almost nobody
+      can explain <b>how</b> you get there. Why not 11:34, or 13:56? Where does that 12 come from?
+      Why does a clock jump back to 0 after 59 seconds, and not after 60 or after 100?
+    </p>
+    <p>
+      This page is about that question. The answer is surprisingly simple, and underneath it sits
+      a structure that people have been using for thousands of years without ever seeing it.
+    </p>
+  </div>
+
+  <!-- ================= DEMO ================= -->
+  <section class="section">
+    <h2>Try it yourself</h2>
+    <p>
+      Every field below shows one layer of the same number. Change any one of them, and the
+      others recalculate instantly. Type <b>75</b> into <b>Sec</b> and watch the extra 15 seconds
+      roll over into <b>Min</b>. The arrow between the two fields will briefly light up when
+      that happens. That correction is called a <b>carry</b>.
+    </p>
+  </section>
+
+  <div class="layers" id="layers"></div>
+  <div class="sumline" id="sum"></div>
+
+  <div class="controls">
+
+    <label class="tlabel" for="tfield">T (ms)</label>
+    <input id="tfield" class="tfield" type="text" inputmode="numeric"
+           autocomplete="off" spellcheck="false" value="0">
+
+    <div class="slidergroup" id="groupMonth">
+      <div class="sliderhead">
+        <span class="slidername">Month range</span>
+        <span class="slidermeta">0 to 30 days</span>
+      </div>
+      <input id="sliderMonth" type="range" min="0" max="2591999999" step="1" value="0">
+      <div class="sliderrange"><span>0</span><span>29 d 23:59:59.999</span></div>
+    </div>
+
+    <div class="slidergroup" id="groupClock">
+      <div class="sliderhead">
+        <span class="slidername">Climbing clock</span>
+        <span class="slidermeta">0 to 12:34:56.789</span>
+      </div>
+      <input id="sliderClock" type="range" min="0" max="45296789" step="1" value="0">
+      <div class="sliderrange"><span>0</span><span>12:34:56.789</span></div>
+    </div>
+
+    <div class="btnrow">
+      <button id="minus" type="button">−1s</button>
+      <button id="plus" type="button">+1s</button>
+      <button id="run" class="primary" type="button">Run</button>
+      <button id="reset" type="button">Reset</button>
+    </div>
+
+    <div class="speedrow" role="group" aria-label="Playback speed">
+      <span class="speedlabel">Speed</span>
+
+      <button class="speed active" type="button" data-speed="1000"
+              data-hint="The clock runs at true speed. 1 real second = 1 simulated second.">
+        <span class="s-main">1s / sec</span>
+        <span class="s-sub">real-time</span>
+      </button>
+
+      <button class="speed" type="button" data-speed="60000"
+              data-hint="60 times faster than real time. 1 real second = 1 simulated minute.">
+        <span class="s-main">1m / sec</span>
+        <span class="s-sub">60x faster</span>
+      </button>
+
+      <button class="speed" type="button" data-speed="3600000"
+              data-hint="3600 times faster than real time. 1 real second = 1 simulated hour.">
+        <span class="s-main">1h / sec</span>
+        <span class="s-sub">3600x faster</span>
+      </button>
+
+      <button class="speed" type="button" data-speed="86400000"
+              data-hint="86400 times faster than real time. 1 real second = 1 full simulated day.">
+        <span class="s-main">1d / sec</span>
+        <span class="s-sub">86400x faster</span>
+      </button>
+    </div>
+
+    <p class="speedhint" id="speedhint">
+      The clock runs at true speed. <b>1 real second</b> = <b>1 simulated second</b>.
+    </p>
+
+  </div>
+
+  <!-- ================= MONEY ================= -->
+  <section class="section">
+    <h2>What is happening here</h2>
+
+    <h3>The everyday example: money</h3>
+    <p>
+      Before the clocks, something everyone knows. Imagine you have <b>notes of €25 and €12</b>.
+      You want to pay exactly <b>€575</b>. How many ways are there to do that?
+    </p>
+    <ul>
+      <li>11 notes of €25 and 25 notes of €12</li>
+      <li>23 notes of €25 and 0 notes of €12</li>
+    </ul>
+    <p>
+      No others. That is the whole idea behind what mathematicians call a linear Diophantine
+      equation. It sounds heavy, but it just means: how many coins of each kind do I need to
+      land exactly on an amount, and how many different combinations exist? That is one extreme.
+      At the other extreme stands the clock.
+    </p>
+
+    <h3>The clock works in the opposite way</h3>
+    <p>
+      A clock has one job that matters more than any other: <b>every second must have exactly one
+      face</b>. Never two, never zero. When you look at the clock at 3 in the afternoon, you do
+      not want to wonder whether it might also be 3 in the morning.
+    </p>
+    <p>
+      With the money example, it is fine that there are two ways to pay €575. With the clock,
+      that is unacceptable. That difference in purpose decides everything. Where money allows
+      many answers, the clock must allow exactly one. And to achieve that, the clock has to
+      follow a rule that money does not:
+    </p>
+    <p>
+      <b>Every layer must fit exactly into the layer above it.</b> 60 seconds fit exactly into
+      1 minute. 60 minutes fit exactly into 1 hour. 24 hours fit exactly into 1 day. No leftover,
+      no rounding. That is why seconds jump back to 0 after 59, and not after 60 or after 100.
+      And that is why a clock cannot have a Diophantine structure. Not because it is forbidden,
+      but because it would not work.
+    </p>
+  </section>
+
+  <!-- ================= PRACTICAL ================= -->
+  <section class="section">
+    <h2>Why this matters in practice</h2>
+
+    <h3>1. If you ever work with time, files, or coordinates</h3>
+    <p>
+      Everywhere you turn one big number into something readable, the same pattern appears.
+    </p>
+    <table class="table">
+      <thead>
+        <tr><th>Big number</th><th>Readable form</th><th>Layers</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>45,296,789 ms</td><td>12:34:56.789</td><td>days, hours, minutes, seconds, ms</td></tr>
+        <tr><td>1,234,567 bytes</td><td>1.23 MB</td><td>bytes, KB, MB</td></tr>
+        <tr><td>3,661 seconds</td><td>1:01:01</td><td>hours, minutes, seconds</td></tr>
+        <tr><td>20260917</td><td>17 September 2026</td><td>year, month, day</td></tr>
+      </tbody>
+    </table>
+    <p>
+      Once you see the pattern one time, you see it everywhere. And if you have ever had to hunt
+      down a bug in a timestamp, you know it almost always comes down to understanding these layers.
+    </p>
+
+    <h3>2. If you have ever tried to explain modulo to someone</h3>
+    <p>
+      Modulo, the remainder after division, is famously hard to explain with formulas alone.
+      But <b>everyone</b> understands a clock. It is 11 o'clock, three hours from now it is
+      2 o'clock. That is 11 + 3 = 14, and 14 mod 12 = 2. Once someone sees that, they understand
+      modulo for the rest of their life.
+    </p>
+
+    <h3>3. The transferable insight</h3>
+    <p>
+      Every system with layers on top of each other has to make a choice. Either you make it
+      easy to find every possible combination, like money. Or you make it impossible to be
+      uncertain, like a clock. Those are opposite goals. You cannot unite them in one structure.
+      That is not a flaw of the clock. It is a design decision.
+    </p>
+  </section>
+
+  <!-- ================= TEACHING ================= -->
+  <section class="section">
+    <h2>Why this is a better teaching route than the usual one</h2>
+    <p>
+      At school, students usually learn modulo like this: the remainder after division,
+      17 mod 12 = 5, now here are some exercises. That works, but it stays abstract. Students
+      can do the sums without understanding why anyone would ever want this.
+    </p>
+    <p>This route starts in exactly the opposite place.</p>
+    <ol>
+      <li><b>Start with the clock.</b> Everyone has an intuition. 12 + 1 = 1. That is not mathematics, that is just how a clock works.</li>
+      <li><b>Then state the rule.</b> Why does it jump back after 12? Because it can show 12 hours and no more.</li>
+      <li><b>Write the rule down.</b> That is modulo. The student already has the idea, only the name is missing.</li>
+      <li><b>Apply it to money.</b> Now the student can solve a Diophantine problem without it being called that.</li>
+      <li><b>Show the difference.</b> The clock chooses certainty, money chooses freedom. That is the real insight.</li>
+    </ol>
+    <p>
+      Someone who learns it this way understands modulo not as a trick, but as a choice you
+      make when you build a system with layers. That is a much stronger understanding.
+    </p>
+  </section>
+
+  <!-- ================= BEAUTIFUL TIME ================= -->
+  <section class="section">
+    <h2>The most beautiful time a clock can show</h2>
+    <p>
+      There is one time that is special, and you have probably never noticed it.
+    </p>
+    <div class="pull">12:34:56.789</div>
+    <p>
+      The digits 1 through 9 sit neatly in order. 1, 2, 3, 4, 5, 6, 7, 8, 9. No interruption,
+      no repetition. It is a lucky hit of the decimal system and the 24-hour division. And it
+      is exactly the time when people take a picture of their clock, or send a message to
+      someone. It is the one second per day when the clock shows its own beauty.
+    </p>
+    <p>
+      In the slider above, there is one that <b>ends exactly on that time</b>. Drag it all the
+      way to the right and you land on 45,296,789 milliseconds: 12 hours, 34 minutes, 56 seconds,
+      and 789 thousandths of a second. That is not a mathematical necessity. It is a tribute to
+      the structure you would otherwise never see.
+    </p>
+  </section>
+
+  <!-- ================= HEART ================= -->
+  <section class="section">
+    <h2>The heart of the difference</h2>
+
+    <h3>The (25, 12) system</h3>
+    <p>
+      The money example rests on one rule for the whole number: <b>25 is one more than a
+      multiple of 12</b>. In other words, 25 = 2 × 12 + 1. Because of this, you can work out
+      in one step how many €25 notes you need at minimum. You divide N by 12, look at the
+      remainder, and you are done. Every other solution then follows automatically: add 12 to
+      the number of €25 notes, subtract 25 from the number of €12 notes. Keep doing that until
+      it no longer fits.
+    </p>
+
+    <h3>The clock</h3>
+    <p>
+      The clock works differently. There is no single rule that gives the whole answer in one
+      step. Each layer must be peeled off on its own. First the hours: how many whole hours fit
+      into T? Then the minutes: how many whole minutes fit into what is left? Then the seconds:
+      what is still left over? Only after four steps do you know the full answer. That is not
+      a weakness. That is exactly what is needed to make every second unique.
+    </p>
+
+    <h3>Why they are not the same, even though they look alike</h3>
+    <p>
+      At first glance, both systems look similar. They both jump back to 0. But the clock jumps
+      back because every layer fits into the one above it. The (25, 12) system does not jump
+      back. It just keeps counting, and the rule 25 = 1 above 12 determines how many solutions
+      exist. That is the heart of it. The clock has no Foundation, and that is not a mistake.
+      That is the entire point.
+    </p>
+  </section>
+
+  <!-- ================= TRAP ================= -->
+  <section class="section">
+    <h2>The 12-hour trap</h2>
+    <p>
+      There is a classic confusion that many people fall into. The 12-hour dial, where 13:00
+      becomes 1:00, uses the same modular idea as the (25, 12) system. It is tempting to think
+      that the clock therefore has the same structure as the money example. It does not, for
+      two reasons.
+    </p>
+    <p>
+      <b>First:</b> the dial is a metaphor. The clock itself does not run on a modulus of 12.
+      The clock runs on 60, 60, 24. The 12 on the dial is a drawing that people have placed on
+      top of the real mechanism.
+    </p>
+    <p>
+      <b>Second:</b> the 12-hour dial loses information. 1 in the morning and 1 in the afternoon
+      look the same. The 24-hour structure does not. That is why the real clock uses 24 hours
+      and not 12. Only with 24 hours does every second stay unique across a whole day.
+    </p>
+    <p>
+      Test it yourself. 3 in the morning is 10,800 seconds, 3 in the afternoon is 54,000 seconds.
+      With 24 hours, those are two different values. With 12 hours, they both become 3 o'clock
+      and you can no longer tell them apart. That is precisely the confusion the real clock
+      exists to prevent.
+    </p>
+  </section>
+
+  <!-- ================= SUMMARY ================= -->
+  <section class="section">
+    <h2>Summary in three points</h2>
+    <ol>
+      <li><b>The purpose differs.</b> The (25, 12) system is built to find as many combinations as possible. The clock is built to give every second exactly one face.</li>
+      <li><b>The method differs.</b> The (25, 12) system uses one rule for the whole number. The clock uses a chain of rules, one per layer.</li>
+      <li><b>The missing Foundation is not a flaw.</b> The clock deliberately chooses certainty. That is exactly the opposite of what the money example needs, and that is the whole point.</li>
+    </ol>
+  </section>
+
+</div>
+
+<p class="foot">
+  Bilal El Issaoui, Amsterdam, 2026. This page is part of a series on linear Diophantine
+  representation systems with p ≡ 1 (mod q).
+</p>
+
+<script>
+(function () {
+  'use strict';
+
+  var DAY = 86400000, HOUR = 3600000, MIN = 60000, SEC = 1000;
+  var MONTH_MAX = 30 * DAY - 1;    /* 2591999999 = 29 d 23:59:59.999 */
+  var CLOCK_MAX = 45296789;        /* 12:34:56.789 */
+
+  var LAYERS = [
+    { key:'d', name:'Days', badge:'unbounded', mod:null,
+      note:'Never resets. It just counts full days, without limit.',
+      f1:'D = \u230AT / 86400000\u230B',
+      f2:function(t,v){return '= \u230A'+t+' / 86400000\u230B = '+v;} },
+    { key:'h', name:'Hours', badge:'mod 24', mod:24,
+      note:'Resets to 0 after 24. When it does, Days gains 1.',
+      f1:'H = \u230A(T mod 86400000) / 3600000\u230B',
+      f2:function(t,v){return '= \u230A'+(t%DAY)+' / 3600000\u230B = '+v;} },
+    { key:'m', name:'Min', badge:'mod 60', mod:60,
+      note:'Resets to 0 after 60. When it does, Hours gains 1.',
+      f1:'M = \u230A(T mod 3600000) / 60000\u230B',
+      f2:function(t,v){return '= \u230A'+(t%HOUR)+' / 60000\u230B = '+v;} },
+    { key:'s', name:'Sec', badge:'mod 60', mod:60,
+      note:'Resets to 0 after 60. When it does, Min gains 1.',
+      f1:'S = \u230A(T mod 60000) / 1000\u230B',
+      f2:function(t,v){return '= \u230A'+(t%MIN)+' / 1000\u230B = '+v;} },
+    { key:'ms', name:'Ms', badge:'mod 1000', mod:1000,
+      note:'Resets to 0 after 1000. When it does, Sec gains 1.',
+      f1:'Ms = T mod 1000',
+      f2:function(t,v){return '= '+t+' mod 1000 = '+v;} }
+  ];
+
+  var T = 0, Tacc = 0;
+  var dirty = null, running = false, rafId = null, lastTs = null;
+  var speed = 1000;
+  var inputs = {}, arrows = {};
+
+  var layersEl   = document.getElementById('layers');
+  var sumEl      = document.getElementById('sum');
+  var tField     = document.getElementById('tfield');
+  var sliderMonth= document.getElementById('sliderMonth');
+  var sliderClock= document.getElementById('sliderClock');
+  var groupMonth = document.getElementById('groupMonth');
+  var groupClock = document.getElementById('groupClock');
+  var runBtn     = document.getElementById('run');
+  var speedHint  = document.getElementById('speedhint');
+
+  LAYERS.forEach(function (L, i) {
+    if (i > 0) {
+      var a = document.createElement('div');
+      a.className = 'arrow'; a.textContent = '\u2190';
+      a.setAttribute('aria-hidden', 'true');
+      layersEl.appendChild(a);
+      arrows[L.key] = a;
+      a.addEventListener('animationend', function () { a.classList.remove('flash'); });
+    }
+
+    var card = document.createElement('div');
+    card.className = 'layer';
+
+    var head = document.createElement('div');
+    head.className = 'layer-head';
+    var nm = document.createElement('span'); nm.className = 'layer-name'; nm.textContent = L.name;
+    var bd = document.createElement('span'); bd.className = 'badge'; bd.textContent = L.badge;
+    head.appendChild(nm); head.appendChild(bd);
+
+    var inp = document.createElement('input');
+    inp.className = 'field'; inp.type = 'text';
+    inp.inputMode = 'numeric'; inp.autocomplete = 'off'; inp.spellcheck = false;
+    inp.value = '0'; inp.setAttribute('aria-label', L.name);
+
+    var f = document.createElement('div');
+    f.className = 'formula';
+    var f1 = document.createElement('span'); f1.className = 'f1'; f1.textContent = L.f1;
+    var f2 = document.createElement('span'); f2.className = 'f2';
+    f.appendChild(f1); f.appendChild(f2);
+
+    var note = document.createElement('p');
+    note.className = 'note'; note.textContent = L.note;
+
+    card.appendChild(head); card.appendChild(inp); card.appendChild(f); card.appendChild(note);
+    layersEl.appendChild(card);
+
+    inputs[L.key] = inp; L.f2el = f2;
+    inp.addEventListener('input', function () { onFieldInput(L, inp); });
+    inp.addEventListener('blur', function () { dirty = null; render(); });
+  });
+
+  function decompose(t) {
+    return {
+      d:  Math.floor(t / DAY),
+      h:  Math.floor(t / HOUR) % 24,
+      m:  Math.floor(t / MIN) % 60,
+      s:  Math.floor(t / SEC) % 60,
+      ms: t % 1000
+    };
+  }
+
+  function render() {
+    var v = decompose(T);
+    for (var i = 0; i < LAYERS.length; i++) {
+      var L = LAYERS[i], inp = inputs[L.key];
+      if (L.key !== dirty) {
+        var str = String(v[L.key]);
+        if (inp.value !== str) inp.value = str;
+      }
+      L.f2el.textContent = L.f2(T, v[L.key]);
+    }
+    sumEl.textContent =
+      '86400000\u00B7' + v.d +
+      ' + 3600000\u00B7'  + v.h +
+      ' + 60000\u00B7'    + v.m +
+      ' + 1000\u00B7'     + v.s +
+      ' + ' + v.ms + ' = ' + T;
+    if (document.activeElement !== tField) tField.value = String(T);
+
+    sliderMonth.value = String(Math.min(T, MONTH_MAX));
+    sliderClock.value = String(Math.min(T, CLOCK_MAX));
+
+    if (T > MONTH_MAX) groupMonth.classList.add('out-of-range');
+    else                groupMonth.classList.remove('out-of-range');
+
+    if (T > CLOCK_MAX) groupClock.classList.add('out-of-range');
+    else                groupClock.classList.remove('out-of-range');
+  }
+
+  function flashArrow(el) {
+    if (!el) return;
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  }
+
+  function applyT(next, flash) {
+    if (!isFinite(next)) return;
+    next = Math.max(0, Math.floor(next));
+    if (!Number.isSafeInteger(next)) next = Number.MAX_SAFE_INTEGER;
+    var prevT = T, before = decompose(T);
+    T = next;
+    var after = decompose(T);
+    render();
+    if (flash && T > prevT) {
+      if (after.h  < before.h)  flashArrow(arrows.h);
+      if (after.m  < before.m)  flashArrow(arrows.m);
+      if (after.s  < before.s)  flashArrow(arrows.s);
+      if (after.ms < before.ms) flashArrow(arrows.ms);
+    }
+  }
+
+  function setT(next, flash) { Tacc = next; applyT(next, flash); }
+
+  function onFieldInput(L, inp) {
+    var raw = inp.value.trim();
+    if (raw === '' || !/^\d+$/.test(raw)) { dirty = L.key; return; }
+    dirty = null;
+    var val = Math.floor(Number(raw));
+    if (!isFinite(val) || val < 0) val = 0;
+    var cap = (L.key === 'd') ? 1e8 : 1e9;
+    if (val > cap) val = cap;
+    var cur = decompose(T); cur[L.key] = val;
+    var nextT = cur.d * DAY + cur.h * HOUR + cur.m * MIN + cur.s * SEC + cur.ms;
+    var carries = L.mod ? Math.floor(val / L.mod) : 0;
+    setT(nextT, true);
+    if (carries > 0) flashArrow(arrows[L.key]);
+  }
+
+  tField.addEventListener('input', function () {
+    var raw = tField.value.trim();
+    if (raw === '' || !/^\d+$/.test(raw)) return;
+    var val = Number(raw);
+    if (!isFinite(val)) return;
+    setT(Math.min(Math.floor(val), Number.MAX_SAFE_INTEGER), true);
+  });
+  tField.addEventListener('blur', function () { tField.value = String(T); });
+
+  sliderMonth.addEventListener('input', function () { setT(Number(sliderMonth.value), true); });
+  sliderClock.addEventListener('input', function () { setT(Number(sliderClock.value), true); });
+
+  document.getElementById('minus').addEventListener('click', function () { setT(T - 1000, true); });
+  document.getElementById('plus').addEventListener('click', function () { setT(T + 1000, true); });
+  document.getElementById('reset').addEventListener('click', function () { stopRun(); setT(0, false); });
+  runBtn.addEventListener('click', function () { if (running) stopRun(); else startRun(); });
+
+  var speedBtns = document.querySelectorAll('.speed');
+  Array.prototype.forEach.call(speedBtns, function (b) {
+    b.addEventListener('click', function () {
+      Array.prototype.forEach.call(speedBtns, function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      speed = Number(b.getAttribute('data-speed'));
+      var hint = b.getAttribute('data-hint') || '';
+      var m = hint.match(/^([^.]*)\.\s*(1 real second = 1 [a-zA-Z ]+)\./);
+      if (m) {
+        speedHint.innerHTML = m[1] + '. <b>1 real second</b> = <b>' +
+                              m[2].replace('1 real second = ', '') + '</b>.';
+      } else {
+        speedHint.textContent = hint;
+      }
+    });
+  });
+
+  function tickLoop(ts) {
+    if (!running) { rafId = null; return; }
+    if (lastTs === null) lastTs = ts;
+    var dt = ts - lastTs; lastTs = ts;
+    if (dt > 100) dt = 100;
+    Tacc += speed * dt / 1000;
+    var nextT = Math.floor(Tacc);
+    if (nextT > T) applyT(nextT, false);
+    rafId = requestAnimationFrame(tickLoop);
+  }
+
+  function startRun() {
+    if (running) return;
+    running = true; lastTs = null; Tacc = T;
+    runBtn.textContent = 'Pause'; runBtn.classList.add('running');
+    rafId = requestAnimationFrame(tickLoop);
+  }
+
+  function stopRun() {
+    running = false;
+    runBtn.textContent = 'Run'; runBtn.classList.remove('running');
+    if (rafId !== null) cancelAnimationFrame(rafId);
+    rafId = null;
+  }
+
+  render();
+})();
+</script>
+
+</body>
+</html>
