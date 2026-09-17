@@ -223,7 +223,6 @@ Alongside this paper there is an HTML document that brings the whole structure t
 - A play button that lets time advance at four speeds, from true speed up to one day per second
 - Visible carry arrows that light up when a layer reaches its maximum and pushes through to the next
 
-The document is available in both English and Dutch.
 
 **Live demo:** https://a19dammer91.github.io/the-exact-algebraic-condition-for-clock-behaviour/
 
